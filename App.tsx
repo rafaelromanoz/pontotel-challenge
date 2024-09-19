@@ -1,7 +1,12 @@
-import 'react-native-gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
+import React from 'react';
 
-import RootStack from './navigation';
+import RootNavigator from './src/navigation/RootNavigator';
 
 export default function App() {
-  return <RootStack />;
+  return (
+    <NavigationContainer>
+      <RootNavigator />
+    </NavigationContainer>
+  );
 }
