@@ -23,8 +23,6 @@ const LaunchDetailScreen = () => {
   const navigation = useNavigation<any>();
   const { launchId, youtubeId, articleUrl } = route.params;
 
-  console.log('article url', articleUrl);
-
   const videoUrl = youtubeId ? `https://www.youtube.com/embed/${youtubeId}` : null;
 
   const dispatch = useAppDispatch();
