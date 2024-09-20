@@ -1,12 +1,14 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 
+import ArticleWebViewScreen from '../screens/ArticleWebViewScreen';
 import LaunchDetailScreen from '../screens/LaunchDetailScreen';
 import LaunchScreen from '../screens/LaunchListScreen';
 
 export type RootStackParamList = {
   LaunchList: undefined;
-  LaunchDetails: { launchId: string; youtubeId?: string };
+  LaunchDetails: { launchId: string; youtubeId?: string; articleUrl?: string };
+  ArticleWebViewScreen: { articleUrl: string };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -22,7 +24,12 @@ const RootNavigator = () => {
       <Stack.Screen
         name="LaunchDetails"
         component={LaunchDetailScreen}
-        options={{ title: 'Detalhes do' }}
+        options={{ title: 'Detalhes do lançamento' }}
+      />
+      <Stack.Screen
+        name="ArticleWebViewScreen"
+        component={ArticleWebViewScreen}
+        options={{ title: 'Leia o artigo' }}
       />
     </Stack.Navigator>
   );

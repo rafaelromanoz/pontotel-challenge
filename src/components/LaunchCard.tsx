@@ -1,39 +1,27 @@
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
-import { RootStackParamList } from '../navigation/RootNavigator';
-
-type LaunchCardProps = {
+interface LaunchCardProps {
   missionName: string;
-  rocketName: string;
   launchDate: string;
-  youtubeId?: string;
-  launchId: string;
-};
-
-type NavigationProp = StackNavigationProp<RootStackParamList, 'LaunchDetails'>;
+  patchUrl: string;
+  onMoreDetails: () => void;
+}
 
 const LaunchCard: React.FC<LaunchCardProps> = ({
   missionName,
-  rocketName,
   launchDate,
-  youtubeId,
-  launchId,
+  patchUrl,
+  onMoreDetails,
 }) => {
-  const navigation = useNavigation<NavigationProp>();
-
-  const goToDetails = () => {
-    navigation.navigate('LaunchDetails', { launchId, youtubeId });
-  };
-
   return (
-    <TouchableOpacity onPress={goToDetails}>
+    <TouchableOpacity onPress={onMoreDetails}>
       <View style={styles.card}>
-        <Text style={styles.missionName}>{missionName}</Text>
-        <Text style={styles.rocketName}>Rocket: {rocketName}</Text>
-        <Text style={styles.launchDate}>Launch Date: {launchDate}</Text>
+        <Image source={{ uri: patchUrl }} style={styles.patchImage} />
+        <View style={styles.infoContainer}>
+          <Text style={styles.missionName}>{missionName}</Text>
+          <Text style={styles.launchDate}>{launchDate}</Text>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -41,30 +29,27 @@ const LaunchCard: React.FC<LaunchCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#fff',
+    flexDirection: 'row',
     padding: 16,
-    marginVertical: 8,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 2,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  patchImage: {
+    width: 50,
+    height: 50,
+    marginRight: 16,
+  },
+  infoContainer: {
+    flex: 1,
   },
   missionName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
-  },
-  rocketName: {
-    fontSize: 16,
-    color: '#555',
-    marginTop: 4,
   },
   launchDate: {
     fontSize: 14,
-    color: '#888',
-    marginTop: 2,
+    color: '#777',
   },
 });
 

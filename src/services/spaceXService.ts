@@ -1,11 +1,22 @@
 import { Launch, Rocket } from '../types/Launch';
 
-export const fetchLaunchesService = async (page: number, limit: number = 1): Promise<Launch[]> => {
-  const response = await fetch(
-    `https://api.spacexdata.com/v4/launches?offset=${(page - 1) * limit}&limit=${limit}`
-  );
-  const data: Launch[] = await response.json();
-  return data;
+export const fetchLaunchesService = async (page: number, limit: number = 10): Promise<Launch[]> => {
+  const offset = (page - 1) * limit;
+  const response = await fetch(`https://api.spacexdata.com/v4/launches/query`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      options: {
+        limit,
+        offset,
+      },
+    }),
+  });
+
+  const data = await response.json();
+  return data.docs;
 };
 
 export const fetchRocketDetails = async (rocketId: string): Promise<Rocket> => {

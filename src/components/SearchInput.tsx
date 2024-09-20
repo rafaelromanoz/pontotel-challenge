@@ -1,30 +1,36 @@
 import React from 'react';
-import { TextInput, StyleSheet } from 'react-native';
+import { View, TextInput, StyleSheet } from 'react-native';
 
-type SearchInputProps = {
+interface SearchInputProps {
   value: string;
   onChange: (text: string) => void;
-};
+  placeholder?: string;
+}
 
-const SearchInput: React.FC<SearchInputProps> = ({ value, onChange }) => {
+const SearchInput: React.FC<SearchInputProps> = ({ value, onChange, placeholder }) => {
   return (
-    <TextInput
-      style={styles.input}
-      placeholder="Procure pelo nome do foguete"
-      value={value}
-      onChangeText={onChange}
-    />
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        value={value}
+        onChangeText={onChange}
+        placeholder={placeholder || 'Buscar...'}
+        placeholderTextColor="#aaa"
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    marginBottom: 16,
+  },
   input: {
-    height: 40,
+    height: 60,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 8,
-    paddingHorizontal: 10,
-    marginBottom: 20,
+    paddingHorizontal: 8,
     backgroundColor: '#fff',
   },
 });

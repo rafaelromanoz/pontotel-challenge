@@ -1,77 +1,77 @@
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, ActivityIndicator, Text, StyleSheet } from 'react-native';
+import { View, FlatList, ActivityIndicator, StyleSheet, Text } from 'react-native';
 
 import LaunchCard from '../components/LaunchCard';
 import SearchInput from '../components/SearchInput';
-import { fetchLaunches, fetchRocket } from '../store/slices/launchesSlice';
+import { RootStackParamList } from '../navigation/RootNavigator';
+import { fetchLaunches } from '../store/slices/launchesSlice';
 import { useAppDispatch, useAppSelector } from '../store/store';
 
-const LaunchScreen = () => {
+type LaunchScreenNavigationProp = NavigationProp<RootStackParamList, 'LaunchList'>;
+
+const PAGE_LIMIT = 10;
+
+const LaunchListScreen = () => {
   const dispatch = useAppDispatch();
-  const { launches, rockets, loading, error, isFetchingMore, page } = useAppSelector(
-    (state) => state.launches
-  );
+  const navigation = useNavigation<LaunchScreenNavigationProp>();
+  const { launches, loading, page, isFetchingMore } = useAppSelector((state) => state.launches);
 
-  const [rocketFilter, setRocketFilter] = useState('');
+  const [missionFilter, setMissionFilter] = useState('');
 
-  // Carregar a primeira página de lançamentos ao montar o componente
   useEffect(() => {
-    dispatch(fetchLaunches({ page: 1 }));
+    dispatch(fetchLaunches({ page: 1, limit: PAGE_LIMIT }));
   }, [dispatch]);
 
-  // Buscar detalhes dos foguetes relacionados aos lançamentos
-  useEffect(() => {
-    launches.forEach((launch) => {
-      if (!rockets[launch.rocket]) {
-        dispatch(fetchRocket(launch.rocket));
-      }
-    });
-  }, [launches, rockets, dispatch]);
-
-  // Função para carregar mais lançamentos ao final da lista
   const handleLoadMore = () => {
     if (!isFetchingMore && !loading) {
-      dispatch(fetchLaunches({ page: page + 1 }));
+      dispatch(fetchLaunches({ page: page + 1, limit: PAGE_LIMIT }));
     }
   };
 
-  // Exibe um indicador de carregamento se estiver carregando a primeira página
-  if (loading && page === 1) {
-    return <ActivityIndicator size="large" />;
-  }
+  const filteredLaunches = launches.filter((launch) =>
+    launch.name.toLowerCase().includes(missionFilter.toLowerCase())
+  );
 
-  // Exibe uma mensagem de erro caso ocorra algum erro ao carregar os lançamentos
-  if (error) {
-    return <Text>Error: {error}</Text>;
-  }
+  const renderFooterLoading = () => <ActivityIndicator size="large" />;
 
-  // Filtra os lançamentos de acordo com o filtro de foguetes
-  const filteredLaunches = launches.filter((launch) => {
-    const rocketName = rockets[launch.rocket] || '';
-    return rocketName.toLowerCase().includes(rocketFilter.toLowerCase());
-  });
+  const emptyLaunchesComponent = () => {
+    return (
+      <View style={{ alignItems: 'center' }}>
+        <Text style={styles.txtEmptyList}>Sem lançamentos no momento!</Text>
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
-      {/* Input de busca para filtrar por nome do foguete */}
-      <SearchInput value={rocketFilter} onChange={setRocketFilter} />
+      <SearchInput
+        value={missionFilter}
+        onChange={setMissionFilter}
+        placeholder="Buscar missão..."
+      />
 
-      {/* Lista de lançamentos com paginação e filtro */}
       <FlatList
         data={filteredLaunches}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) => `${item.id}-${index}`}
         renderItem={({ item }) => (
           <LaunchCard
             missionName={item.name}
-            rocketName={rockets[item.rocket] || 'Carregando...'}
             launchDate={new Date(item.date_utc).toLocaleDateString()}
-            launchId={item.id}
-            youtubeId={item.links?.youtube_id}
+            patchUrl={item.links?.patch?.small || ''}
+            onMoreDetails={() =>
+              navigation.navigate('LaunchDetails', {
+                launchId: item.id,
+                articleUrl: item.links.article,
+                youtubeId: item.links.youtube_id,
+              })
+            }
           />
         )}
-        onEndReached={handleLoadMore} // Carrega mais lançamentos ao chegar ao fim
-        onEndReachedThreshold={0.5} // Aciona o carregamento quando 50% do fim da lista é alcançado
-        ListFooterComponent={isFetchingMore ? <ActivityIndicator size="small" /> : null} // Indicador de carregamento no rodapé
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={renderFooterLoading}
+        ListEmptyComponent={emptyLaunchesComponent}
       />
     </View>
   );
@@ -83,6 +83,14 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#f0f0f0',
   },
+  footer: {
+    paddingVertical: 20,
+    borderTopWidth: 1,
+    borderColor: '#CED0CE',
+  },
+  txtEmptyList: {
+    fontSize: 20,
+  },
 });
 
-export default LaunchScreen;
+export default LaunchListScreen;
