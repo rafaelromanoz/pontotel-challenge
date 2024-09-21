@@ -1,5 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
+import Toast from 'react-native-toast-message'; // Importe o Toast
 import { Provider } from 'react-redux';
 
 import RootNavigator from './src/navigation/RootNavigator';
@@ -10,6 +11,7 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer>
         <RootNavigator />
+        <Toast />
       </NavigationContainer>
     </Provider>
   );

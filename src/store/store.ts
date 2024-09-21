@@ -3,10 +3,12 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import devToolsEnhancer from 'redux-devtools-expo-dev-plugin';
 
 import launchesReducer from './slices/launchesSlice';
+import themeReducer from './slices/themeSlice';
 
 export const store = configureStore({
   reducer: {
     launches: launchesReducer,
+    theme: themeReducer,
   },
   devTools: false,
   enhancers: (getDefaultEnhancers) => getDefaultEnhancers().concat(devToolsEnhancer()),
