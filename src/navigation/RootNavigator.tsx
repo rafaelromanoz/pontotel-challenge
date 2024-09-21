@@ -83,15 +83,16 @@ const RootNavigator = () => {
             backgroundColor: theme.background,
           },
           headerTintColor: theme.text,
-          headerRight: () => renderHeaderRight(),
         }}>
-        <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Login' }} />
-        <Stack.Screen name="SignUp" component={SignUpScreen} options={{ title: 'Cadastrar' }} />
+        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
+
         <Stack.Screen
           name="LaunchList"
           component={LaunchListScreen}
           options={{
             title: 'Lançamentos da SpaceX',
+            headerRight: () => renderHeaderRight(),
           }}
         />
         <Stack.Screen
