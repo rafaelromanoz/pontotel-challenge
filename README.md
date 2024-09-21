@@ -45,7 +45,7 @@ Este projeto foi desenvolvido como parte de um **teste técnico** para a empresa
    ```
 2. Instale as dependências:
    ```bash
-   cd spacex-launches-app
+   cd pontotel-challenge
    npm install
    ```
 3. Execute o projeto:
